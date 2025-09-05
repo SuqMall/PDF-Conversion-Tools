@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Conversion Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            max-width: 500px;
+            margin: 20px auto 40px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6a11cb;
+            font-size: 1.2rem;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tool-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+        
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .tool-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .tool-content {
+            padding: 20px;
+        }
+        
+        .tool-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .convert-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .convert-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-info {
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .download-btn {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #25d366, #20b2aa);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .features {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2575fc;
+            font-size: 1.8rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .feature p {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .search-box {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF Conversion Tools</h1>
+            <p>Convert, transform and manage your PDF files with our easy-to-use tools</p>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" placeholder="Search for a tool..." id="searchInput">
+            <i class="fas fa-search"></i>
+        </div>
+        
+        <div class="tools-grid" id="toolsGrid">
+            <!-- PDF to HTML -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fab fa-html5"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO HTML</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDFs to HTML effortlessly, preserving text, images, and formatting.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="htmlInput">
+                    <button class="convert-btn" onclick="document.getElementById('htmlInput').click()">Select PDF File</button>
+                    <p class="file-info" id="htmlFileInfo"></p>
+                    <div class="progress-bar" id="htmlProgressBar">
+                        <div class="progress" id="htmlProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="htmlConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="htmlDownloadBtn">Download HTML File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to Zip -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-archive"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO Zip</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Compress and convert PDF files into ZIP archives for easy sharing.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="zipInput">
+                    <button class="convert-btn" onclick="document.getElementById('zipInput').click()">Select PDF File</button>
+                    <p class="file-info" id="zipFileInfo"></p>
+                    <div class="progress-bar" id="zipProgressBar">
+                        <div class="progress" id="zipProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="zipConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="zipDownloadBtn">Download ZIP File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to JSON -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO Json</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Extract PDF data into JSON format for easy processing and integration.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="jsonInput">
+                    <button class="convert-btn" onclick="document.getElementById('jsonInput').click()">Select PDF File</button>
+                    <p class="file-info" id="jsonFileInfo"></p>
+                    <div class="progress-bar" id="jsonProgressBar">
+                        <div class="progress" id="jsonProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="jsonConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="jsonDownloadBtn">Download JSON File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to XML -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO XML</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF content to structured XML format for data processing.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="xmlInput">
+                    <button class="convert-btn" onclick="document.getElementById('xmlInput').click()">Select PDF File</button>
+                    <p class="file-info" id="xmlFileInfo"></p>
+                    <div class="progress-bar" id="xmlProgressBar">
+                        <div class="progress" id="xmlProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="xmlConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="xmlDownloadBtn">Download XML File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to CSV -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO CSV</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF tables to CSV format for easy data analysis and manipulation.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="csvInput">
+                    <button class="convert-btn" onclick="document.getElementById('csvInput').click()">Select PDF File</button>
+                    <p class="file-info" id="csvFileInfo"></p>
+                    <div class="progress-bar" id="csvProgressBar">
+                        <div class="progress" id="csvProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="csvConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="csvDownloadBtn">Download CSV File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to JPG -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-image"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO JPG</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF pages to high-quality JPG images in seconds.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="jpgInput">
+                    <button class="convert-btn" onclick="document.getElementById('jpgInput').click()">Select PDF File</button>
+                    <p class="file-info" id="jpgFileInfo"></p>
+                    <div class="progress-bar" id="jpgProgressBar">
+                        <div class="progress" id="jpgProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="jpgConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="jpgDownloadBtn">Download JPG Files</button>
+                </div>
+            </div>
+            
+            <!-- PDF to PNG -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO PNG</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF pages to PNG format with transparent background support.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="pngInput">
+                    <button class="convert-btn" onclick="document.getElementById('pngInput').click()">Select PDF File</button>
+                    <p class="file-info" id="pngFileInfo"></p>
+                    <div class="progress-bar" id="pngProgressBar">
+                        <div class="progress" id="pngProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="pngConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="pngDownloadBtn">Download PNG Files</button>
+                </div>
+            </div>
+            
+            <!-- CSV to PDF -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="tool-title">CSV TO PDF</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert CSV data into well-formatted PDF reports and documents.</p>
+                    <input type="file" class="file-input" accept=".csv" id="csvToPdfInput">
+                    <button class="convert-btn" onclick="document.getElementById('csvToPdfInput').click()">Select CSV File</button>
+                    <p class="file-info" id="csvToPdfFileInfo"></p>
+                    <div class="progress-bar" id="csvToPdfProgressBar">
+                        <div class="progress" id="csvToPdfProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="csvToPdfConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="csvToPdfDownloadBtn">Download PDF File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to Excel -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO Excel</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Transform PDF data into Excel spreadsheets with perfect formatting.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="excelInput">
+                    <button class="convert-btn" onclick="document.getElementById('excelInput').click()">Select PDF File</button>
+                    <p class="file-info" id="excelFileInfo"></p>
+                    <div class="progress-bar" id="excelProgressBar">
+                        <div class="progress" id="excelProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="excelConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="excelDownloadBtn">Download Excel File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to Word -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO Word</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF documents to editable Word files with perfect layout.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="wordInput">
+                    <button class="convert-btn" onclick="document.getElementById('wordInput').click()">Select PDF File</button>
+                    <p class="file-info" id="wordFileInfo"></p>
+                    <div class="progress-bar" id="wordProgressBar">
+                        <div class="progress" id="wordProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="wordConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="wordDownloadBtn">Download Word File</button>
+                </div>
+            </div>
+            
+            <!-- PDF to WEBP -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <h3 class="tool-title">PDF TO WEBP</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert PDF pages to modern WEBP format for smaller file sizes.</p>
+                    <input type="file" class="file-input" accept=".pdf" id="webpInput">
+                    <button class="convert-btn" onclick="document.getElementById('webpInput').click()">Select PDF File</button>
+                    <p class="file-info" id="webpFileInfo"></p>
+                    <div class="progress-bar" id="webpProgressBar">
+                        <div class="progress" id="webpProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="webpConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="webpDownloadBtn">Download WEBP Files</button>
+                </div>
+            </div>
+            
+            <!-- JPG to PDF -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h3 class="tool-title">JPG TO PDF</h3>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Convert one or multiple JPG images into a single PDF document.</p>
+                    <input type="file" class="file-input" accept=".jpg,.jpeg" id="jpgToPdfInput" multiple>
+                    <button class="convert-btn" onclick="document.getElementById('jpgToPdfInput').click()">Select JPG Files</button>
+                    <p class="file-info" id="jpgToPdfFileInfo"></p>
+                    <div class="progress-bar" id="jpgToPdfProgressBar">
+                        <div class="progress" id="jpgToPdfProgress"></div>
+                    </div>
+                    <button class="convert-btn" id="jpgToPdfConvertBtn" style="display:none">Convert Now</button>
+                    <button class="download-btn" id="jpgToPdfDownloadBtn">Download PDF File</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h2>Why Choose Our Tools?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <i class="fas fa-lock"></i>
+                    <h3>Secure Conversion</h3>
+                    <p>Your files are encrypted and automatically deleted after conversion</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Fast Processing</h3>
+                    <p>Convert your files in seconds with our optimized algorithms</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-cloud-download-alt"></i>
+                    <h3>Cloud-Based</h3>
+                    <p>No software installation required - access from any device</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-thumbs-up"></i>
+                    <h3>High Quality</h3>
+                    <p>Maintain original formatting and quality in all conversions</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 PDF Conversion Tools. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // File input handling for all tools
+        const setupFileInput = (inputId, fileInfoId, convertBtnId) => {
+            const fileInput = document.getElementById(inputId);
+            const fileInfo = document.getElementById(fileInfoId);
+            const convertBtn = document.getElementById(convertBtnId);
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const fileSize = (this.files[0].size / 1024).toFixed(2);
+                    fileInfo.textContent = `${fileName} (${fileSize} KB)`;
+                    convertBtn.style.display = 'block';
+                } else {
+                    fileInfo.textContent = '';
+                    convertBtn.style.display = 'none';
+                }
+            });
+        };
+
+        // Initialize all file inputs
+        setupFileInput('htmlInput', 'htmlFileInfo', 'htmlConvertBtn');
+        setupFileInput('zipInput', 'zipFileInfo', 'zipConvertBtn');
+        setupFileInput('jsonInput', 'jsonFileInfo', 'jsonConvertBtn');
+        setupFileInput('xmlInput', 'xmlFileInfo', 'xmlConvertBtn');
+        setupFileInput('csvInput', 'csvFileInfo', 'csvConvertBtn');
+        setupFileInput('jpgInput', 'jpgFileInfo', 'jpgConvertBtn');
+        setupFileInput('pngInput', 'pngFileInfo', 'pngConvertBtn');
+        setupFileInput('csvToPdfInput', 'csvToPdfFileInfo', 'csvToPdfConvertBtn');
+        setupFileInput('excelInput', 'excelFileInfo', 'excelConvertBtn');
+        setupFileInput('wordInput', 'wordFileInfo', 'wordConvertBtn');
+        setupFileInput('webpInput', 'webpFileInfo', 'webpConvertBtn');
+        
+        // Special handling for multiple file input
+        document.getElementById('jpgToPdfInput').addEventListener('change', function() {
+            const fileInfo = document.getElementById('jpgToPdfFileInfo');
+            const convertBtn = document.getElementById('jpgToPdfConvertBtn');
+            
+            if (this.files.length > 0) {
+                let totalSize = 0;
+                for (let i = 0; i < this.files.length; i++) {
+                    totalSize += this.files[i].size;
+                }
+                
+                fileInfo.textContent = `${this.files.length} file(s) (${(totalSize / 1024).toFixed(2)} KB)`;
+                convertBtn.style.display = 'block';
+            } else {
+                fileInfo.textContent = '';
+                convertBtn.style.display = 'none';
+            }
+        });
+
+        // Conversion simulation function
+        const simulateConversion = (progressBarId, progressId, convertBtnId, downloadBtnId) => {
+            const progressBar = document.getElementById(progressBarId);
+            const progress = document.getElementById(progressId);
+            const convertBtn = document.getElementById(convertBtnId);
+            const downloadBtn = document.getElementById(downloadBtnId);
+            
+            // Show progress bar
+            progressBar.style.display = 'block';
+            progress.style.width = '0%';
+            
+            // Disable convert button during conversion
+            convertBtn.disabled = true;
+            convertBtn.textContent = 'Converting...';
+            
+            // Simulate conversion progress
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    
+                    // Show download button
+                    downloadBtn.style.display = 'block';
+                    
+                    // Reset convert button
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = 'Convert Again';
+                    convertBtn.style.display = 'none';
+                } else {
+                    width += 5;
+                    progress.style.width = width + '%';
+                }
+            }, 100);
+        };
+
+        // Set up conversion buttons
+        document.getElementById('htmlConvertBtn').addEventListener('click', () => {
+            simulateConversion('htmlProgressBar', 'htmlProgress', 'htmlConvertBtn', 'htmlDownloadBtn');
+        });
+        
+        document.getElementById('zipConvertBtn').addEventListener('click', () => {
+            simulateConversion('zipProgressBar', 'zipProgress', 'zipConvertBtn', 'zipDownloadBtn');
+        });
+        
+        document.getElementById('jsonConvertBtn').addEventListener('click', () => {
+            simulateConversion('jsonProgressBar', 'jsonProgress', 'jsonConvertBtn', 'jsonDownloadBtn');
+        });
+        
+        document.getElementById('xmlConvertBtn').addEventListener('click', () => {
+            simulateConversion('xmlProgressBar', 'xmlProgress', 'xmlConvertBtn', 'xmlDownloadBtn');
+        });
+        
+        document.getElementById('csvConvertBtn').addEventListener('click', () => {
+            simulateConversion('csvProgressBar', 'csvProgress', 'csvConvertBtn', 'csvDownloadBtn');
+        });
+        
+        document.getElementById('jpgConvertBtn').addEventListener('click', () => {
+            simulateConversion('jpgProgressBar', 'jpgProgress', 'jpgConvertBtn', 'jpgDownloadBtn');
+        });
+        
+        document.getElementById('pngConvertBtn').addEventListener('click', () => {
+            simulateConversion('pngProgressBar', 'pngProgress', 'pngConvertBtn', 'pngDownloadBtn');
+        });
+        
+        document.getElementById('csvToPdfConvertBtn').addEventListener('click', () => {
+            simulateConversion('csvToPdfProgressBar', 'csvToPdfProgress', 'csvToPdfConvertBtn', 'csvToPdfDownloadBtn');
+        });
+        
+        document.getElementById('excelConvertBtn').addEventListener('click', () => {
+            simulateConversion('excelProgressBar', 'excelProgress', 'excelConvertBtn', 'excelDownloadBtn');
+        });
+        
+        document.getElementById('wordConvertBtn').addEventListener('click', () => {
+            simulateConversion('wordProgressBar', 'wordProgress', 'wordConvertBtn', 'wordDownloadBtn');
+        });
+        
+        document.getElementById('webpConvertBtn').addEventListener('click', () => {
+            simulateConversion('webpProgressBar', 'webpProgress', 'webpConvertBtn', 'webpDownloadBtn');
+        });
+        
+        document.getElementById('jpgToPdfConvertBtn').addEventListener('click', () => {
+            simulateConversion('jpgToPdfProgressBar', 'jpgToPdfProgress', 'jpgToPdfConvertBtn', 'jpgToPdfDownloadBtn');
+        });
+
+        // Download buttons - simulate download
+        const setupDownloadButton = (buttonId, fileName) => {
+            document.getElementById(buttonId).addEventListener('click', () => {
+                alert(`Downloading ${fileName}`);
+            });
+        };
+
+        // Set up download buttons
+        setupDownloadButton('htmlDownloadBtn', 'converted.html');
+        setupDownloadButton('zipDownloadBtn', 'archive.zip');
+        setupDownloadButton('jsonDownloadBtn', 'data.json');
+        setupDownloadButton('xmlDownloadBtn', 'converted.xml');
+        setupDownloadButton('csvDownloadBtn', 'table.csv');
+        setupDownloadButton('jpgDownloadBtn', 'images.zip');
+        setupDownloadButton('pngDownloadBtn', 'images.zip');
+        setupDownloadButton('csvToPdfDownloadBtn', 'converted.pdf');
+        setupDownloadButton('excelDownloadBtn', 'spreadsheet.xlsx');
+        setupDownloadButton('wordDownloadBtn', 'document.docx');
+        setupDownloadButton('webpDownloadBtn', 'images.zip');
+        setupDownloadButton('jpgToPdfDownloadBtn', 'converted.pdf');
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchText = this.value.toLowerCase();
+            const toolCards = document.querySelectorAll('.tool-card');
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('.tool-title').textContent.toLowerCase();
+                const description = card.querySelector('.tool-description').textContent.toLowerCase();
+                
+                if (title.includes(searchText) || description.includes(searchText)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
